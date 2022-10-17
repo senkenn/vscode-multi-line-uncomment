@@ -21,13 +21,17 @@ export function activate(context: vscode.ExtensionContext): void {
    * Now provide the implementation of the command with registerCommand
    * The commandId parameter must match the command field in package.json
    */
-  const disposable = vscode.commands.registerCommand('vscode-multi-line-uncomment.helloWorld', () => {
+  const disposable = vscode.commands.registerCommand('vscode.multi.line.uncomment.uncomment', () => {
 
-    /*
-     * The code you place here will be executed every time your command is executed
-     * Display a message box to the user
-     */
-    vscode.window.showInformationMessage('Hello World from Multi Line Uncomment!');
+    const editor = vscode.window.activeTextEditor;
+    if(!editor) { // ファイルを何も開いていなかったら何もしない
+      return;
+    }
+
+    const document = editor.document;
+    const selection = editor.selection;
+    const text = document.getText(selection);
+    console.log(text);
   });
 
   context.subscriptions.push(disposable);

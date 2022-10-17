@@ -10,14 +10,14 @@
     "Other"
   ],
   "activationEvents": [
-    "onCommand:vscode-multi-line-uncomment.helloWorld"
+    "onCommand:vscode.multi.line.uncomment.uncomment"
   ],
   "main": "./dist/extension.js",
   "contributes": {
     "commands": [
       {
-        "command": "vscode-multi-line-uncomment.helloWorld",
-        "title": "Hello World"
+        "command": "vscode.multi.line.uncomment.uncomment",
+        "title": "Uncomment"
       }
     ]
   },

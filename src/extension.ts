@@ -1,7 +1,3 @@
-/*
- * The module 'vscode' contains the VS Code extensibility API
- * Import the module and reference it with the alias vscode in your code below
- */
 import * as vscode from 'vscode';
 
 /**
@@ -10,18 +6,7 @@ import * as vscode from 'vscode';
  */
 export function activate(context: vscode.ExtensionContext): void {
 
-  /*
-   * Use the console to output diagnostic information (console.log) and errors (console.error)
-   * This line of code will only be executed once when your extension is activated
-   */
-  console.log('Congratulations, your extension "vscode-multi-line-uncomment" is now active!');
-
-  /*
-   * The command has been defined in the package.json file
-   * Now provide the implementation of the command with registerCommand
-   * The commandId parameter must match the command field in package.json
-   */
-  const disposable = vscode.commands.registerCommand('vscode.multi.line.uncomment.uncomment', () => {
+  const disposable = vscode.commands.registerCommand('vscode.multi.line.uncomment.uncomment', async () => {
 
     const editor = vscode.window.activeTextEditor;
     if(!editor) { // ファイルを何も開いていなかったら何もしない
@@ -30,11 +15,54 @@ export function activate(context: vscode.ExtensionContext): void {
 
     const document = editor.document;
     const selection = editor.selection;
-    const text = document.getText(selection);
-    console.log(text);
+    const selectedText = document.getText(selection);
+    
+    await editor.edit(editBuilder => {
+      editBuilder.replace(selection, uncomment(selectedText));
+    });
   });
 
   context.subscriptions.push(disposable);
+}
+
+/**
+ * コメントアウトを解除する
+ */
+function uncomment(text: string): string {
+  let result = '';
+  console.log(text.length);
+  for(let i = 0; i < text.length; i++) {
+
+    // starred block の先頭行の判定
+    if(text[i] === '/' && text[i + 1] === '*') {
+
+      // 行端に達するまで進める
+      while(text[i] !== '\n') {
+        i++;
+      }
+
+      i++; // 改行の消去
+    }
+    
+    result += text[i];
+    console.log(text[i]);
+
+    // TODO: #7 中間行
+
+    // starred block の最終行の判定
+    if(text[i + 1] === '*' && text[i + 2] === '/') {
+
+      // 行端に達するまで進める
+      while(text[i] !== '\n') {
+        i++;
+        console.log(i);
+      }
+
+      i++; // 改行の消去
+    }
+  }
+  
+  return result;
 }
 
 /**

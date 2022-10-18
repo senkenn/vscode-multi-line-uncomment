@@ -17,7 +17,13 @@
     "commands": [
       {
         "command": "vscode.multi.line.uncomment.uncomment",
-        "title": "Uncomment"
+        "title": "Multi Line Uncomment: Uncomment"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "vscode.multi.line.uncomment.uncomment",
+        "key": "ctrl+/"
       }
     ]
   },

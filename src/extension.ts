@@ -29,39 +29,15 @@ export function activate(context: vscode.ExtensionContext): void {
  * コメントアウトを解除する
  */
 function uncomment(text: string): string {
-  let result = '';
-  console.log(text.length);
-  for(let i = 0; i < text.length; i++) {
-
-    // starred block の先頭行の判定
-    if(text[i] === '/' && text[i + 1] === '*') {
-
-      // 行端に達するまで進める
-      while(text[i] !== '\n') {
-        i++;
-      }
-
-      i++; // 改行の消去
-    }
-    
-    result += text[i];
-    console.log(text[i]);
-
-    // TODO: #7 中間行
-
-    // starred block の最終行の判定
-    if(text[i + 1] === '*' && text[i + 2] === '/') {
-
-      // 行端に達するまで進める
-      while(text[i] !== '\n') {
-        i++;
-        console.log(i);
-      }
-
-      i++; // 改行の消去
-    }
-  }
   
+  const rows = text.split(/\r\n|\n/); // 改行で行を分ける  
+  const len = rows.length;
+  const rowsWithMiddle = rows.splice(1, len - 3); // 先頭行と最終行を除外
+
+  // TODO: #7 中間行
+  
+  const result = rowsWithMiddle.join('\n'); // 一つの文字列に結合
+
   return result;
 }
 

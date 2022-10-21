@@ -31,14 +31,38 @@ export function activate(context: vscode.ExtensionContext): void {
 function uncomment(text: string): string {
   
   const rows = text.split(/\r\n|\n/); // 改行で行を分ける  
-  const len = rows.length;
-  const rowsWithMiddle = rows.splice(1, len - 3); // 先頭行と最終行を除外
+  const resultRows: string[] = [];
 
-  // TODO: #7 中間行
+  let isCommentLine = false;
+  let commentStartColumn = 0;
+  for(let i = 0; i < rows.length; i++) {
+    for(let j = 0; j < rows[i].length; j++) {
+
+      // コメント先頭行の検出
+      if(rows[i][j] === '/' && rows[i][j + 1] === '*') {
+        isCommentLine = true;
+        commentStartColumn = j;
+      }
+
+      // コメント最終行の検出
+      if(rows[i][j] === '*' && rows[i][j + 1] === '/') {
+        isCommentLine = false;
+      }
+    }
+    
+    // コメント行ならアンコメントする
+    let newRow = rows[i];
+    if(isCommentLine) {
+      const commentColumns = 3;
+      newRow = rows[i].slice(0, commentStartColumn) + rows[i].slice(commentStartColumn + commentColumns);
+    }
+    
+    resultRows.push(newRow);
+  }
   
-  const result = rowsWithMiddle.join('\n'); // 一つの文字列に結合
+  const resultText = resultRows.join('\n'); // 一つの文字列に結合
 
-  return result;
+  return resultText;
 }
 
 /**

@@ -1,8 +1,5 @@
-/*
- * The module 'vscode' contains the VS Code extensibility API
- * Import the module and reference it with the alias vscode in your code below
- */
 import * as vscode from 'vscode';
+import { Uncomment } from './uncomment';
 
 /**
  * This method is called when your extension is activated
@@ -10,18 +7,7 @@ import * as vscode from 'vscode';
  */
 export function activate(context: vscode.ExtensionContext): void {
 
-  /*
-   * Use the console to output diagnostic information (console.log) and errors (console.error)
-   * This line of code will only be executed once when your extension is activated
-   */
-  console.log('Congratulations, your extension "vscode-multi-line-uncomment" is now active!');
-
-  /*
-   * The command has been defined in the package.json file
-   * Now provide the implementation of the command with registerCommand
-   * The commandId parameter must match the command field in package.json
-   */
-  const disposable = vscode.commands.registerCommand('vscode.multi.line.uncomment.uncomment', () => {
+  const disposable = vscode.commands.registerCommand('vscode.multi.line.uncomment.uncomment', async () => {
 
     const editor = vscode.window.activeTextEditor;
     if(!editor) { // ファイルを何も開いていなかったら何もしない
@@ -30,8 +16,31 @@ export function activate(context: vscode.ExtensionContext): void {
 
     const document = editor.document;
     const selection = editor.selection;
-    const text = document.getText(selection);
-    console.log(text);
+
+    // 選択開始位置からではなく、行全体の文字列を取得するように範囲の変更
+    const startPos = new vscode.Position(selection.anchor.line, 0);
+    const selectedLinesRange = new vscode.Range(startPos, selection.end);
+    const selectedText = document.getText(selectedLinesRange);
+
+    // コメント行の検索
+    const uncomment = new Uncomment(selectedText);
+    const [commentStartPosArr, commentEndPosArr] = uncomment.detectMultiLineCommentPos();
+
+    // コメントが何もなければコメントして終了
+    if(!commentStartPosArr.length || !commentEndPosArr.length) {
+      await vscode.commands.executeCommand('editor.action.commentLine');
+      return;
+    }
+
+    // アンコメント処理
+    const range = new vscode.Range(commentStartPosArr[0], commentEndPosArr[0]);
+    const startPosInEditor = new vscode.Position(selection.start.line, 0);
+    const rangeInEditor = new vscode.Range(startPosInEditor, selection.end);
+
+    await editor.edit(editBuilder => {
+      editBuilder.replace(rangeInEditor, uncomment.uncomment(range));
+    });
+
   });
 
   context.subscriptions.push(disposable);
@@ -39,5 +48,5 @@ export function activate(context: vscode.ExtensionContext): void {
 
 /**
  * This method is called when your extension is deactivated
- */ 
-export function deactivate(): void {}
+ */
+export function deactivate(): void { }

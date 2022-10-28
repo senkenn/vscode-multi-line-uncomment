@@ -27,13 +27,13 @@ export class Uncomment {
 
         // コメント先頭行の検出
         if(rows[i][j] === '/' && rows[i][j + 1] === '*') {
-          const position = new vscode.Position(i, j); // +1 にして先頭行を削除
+          const position = new vscode.Position(i, j);
           commentStartPosArr.push(position);
         }
 
         // コメント最終行の検出
         if(rows[i][j] === '*' && rows[i][j + 1] === '/') {
-          const position = new vscode.Position(i + 1, j - 1); // アンコメント対象はこの行を含まない
+          const position = new vscode.Position(i + 1, j - 1);
           commentEndPosArr.push(position);
         }
       }
@@ -44,19 +44,22 @@ export class Uncomment {
 
   /**
    * アンコメントする（コメント部の削除をする）
+   * @param range コメントの範囲
+   * @return アンコメント後の文字列
    */
   public uncomment(range: vscode.Range): string {
 
     const start = range.start.translate(+ 1); // インクリメントして先頭行を削除
     const end = range.end.translate(- 1); // デクリメントで終端行を削除
     const commentColumnNum = 3;
+    
     const uncommentRows: string[] = [];
     for(let i = start.line; i < end.line; i++) {
       uncommentRows.push(
         this.rows[i].slice(0, start.character)
         + this.rows[i].slice(start.character + commentColumnNum));
     }
-    uncommentRows.push('');
+    uncommentRows.push(''); // 最終行は改行にするための空文字列
 
     return uncommentRows.join('\n'); // 一つの文字列に結合して返す
   }

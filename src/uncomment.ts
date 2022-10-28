@@ -27,13 +27,13 @@ export class Uncomment {
 
         // コメント先頭行の検出
         if(rows[i][j] === '/' && rows[i][j + 1] === '*') {
-          const position = new vscode.Position(i + 1, j); // +1 にして先頭行を削除
+          const position = new vscode.Position(i, j); // +1 にして先頭行を削除
           commentStartPosArr.push(position);
         }
 
         // コメント最終行の検出
         if(rows[i][j] === '*' && rows[i][j + 1] === '/') {
-          const position = new vscode.Position(i, j - 1); // アンコメント対象はこの行を含まない
+          const position = new vscode.Position(i + 1, j - 1); // アンコメント対象はこの行を含まない
           commentEndPosArr.push(position);
         }
       }
@@ -47,8 +47,8 @@ export class Uncomment {
    */
   public uncomment(range: vscode.Range): string {
 
-    const start = range.start;
-    const end = range.end;
+    const start = range.start.translate(+ 1); // インクリメントして先頭行を削除
+    const end = range.end.translate(- 1); // デクリメントで終端行を削除
     const commentColumnNum = 3;
     const uncommentRows: string[] = [];
     for(let i = start.line; i < end.line; i++) {

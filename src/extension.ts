@@ -1,4 +1,5 @@
 import * as vscode from 'vscode';
+
 import { Uncomment } from './uncomment';
 
 /**
@@ -26,7 +27,7 @@ export function activate(context: vscode.ExtensionContext): void {
     const uncomment = new Uncomment(selectedText);
     const [commentStartPosArr, commentEndPosArr] = uncomment.detectMultiLineCommentPos();
 
-    // コメントが何もなければコメントして終了
+    // コメント行が何もなければ標準のコメント処理をして終了
     if(!commentStartPosArr.length || !commentEndPosArr.length) {
       await vscode.commands.executeCommand('editor.action.commentLine');
       return;
@@ -34,11 +35,14 @@ export function activate(context: vscode.ExtensionContext): void {
 
     // アンコメント処理
     const range = new vscode.Range(commentStartPosArr[0], commentEndPosArr[0]);
-    const startPosInEditor = new vscode.Position(selection.start.line, 0);
-    const rangeInEditor = new vscode.Range(startPosInEditor, selection.end);
+    
+    // NOTE: Position.translate(): Create a new position relative to this position.
+    const commentStartPosInEditor = selection.start.translate(commentStartPosArr[0].line);
+    const commentEndPosInEditor = commentStartPosInEditor.translate(commentEndPosArr[0].line);
+    const commentRangeInEditor = new vscode.Range(commentStartPosInEditor, commentEndPosInEditor);
 
     await editor.edit(editBuilder => {
-      editBuilder.replace(rangeInEditor, uncomment.uncomment(range));
+      editBuilder.replace(commentRangeInEditor, uncomment.uncomment(range));
     });
 
   });

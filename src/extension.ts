@@ -18,8 +18,8 @@ export function activate(context: vscode.ExtensionContext): void {
     const document = editor.document;
     const selection = editor.selection;
 
-    // 選択開始位置からではなく、行全体の文字列を取得するように範囲の変更
-    const startPos = new vscode.Position(selection.anchor.line, 0);
+    // 選択開始位置からではなく、行頭から文字列を取得する
+    const startPos = new vscode.Position(selection.start.line, 0);
     const selectedLinesRange = new vscode.Range(startPos, selection.end);
     const selectedText = document.getText(selectedLinesRange);
 

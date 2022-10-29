@@ -33,16 +33,13 @@ export function activate(context: vscode.ExtensionContext): void {
       return;
     }
 
-    // アンコメント処理
-    const range = new vscode.Range(commentStartPosArr[0], commentEndPosArr[0]);
-    
-    // NOTE: Position.translate(): Create a new position relative to this position.
-    const commentStartPosInEditor = selection.start.translate(commentStartPosArr[0].line);
-    const commentEndPosInEditor = commentStartPosInEditor.translate(commentEndPosArr[0].line);
-    const commentRangeInEditor = new vscode.Range(commentStartPosInEditor, commentEndPosInEditor);
-
+    const ranges = commentStartPosArr.map((unused, i) => 
+      new vscode.Range(commentStartPosArr[i], commentEndPosArr[i])
+    );
+    console.log(ranges);
+      
     await editor.edit(editBuilder => {
-      editBuilder.replace(commentRangeInEditor, uncomment.uncomment(range));
+      editBuilder.replace(selectedLinesRange, uncomment.uncomment(ranges));
     });
 
   });

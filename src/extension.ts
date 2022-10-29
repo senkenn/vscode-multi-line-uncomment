@@ -18,8 +18,8 @@ export function activate(context: vscode.ExtensionContext): void {
     const document = editor.document;
     const selection = editor.selection;
 
-    // 選択開始位置からではなく、行全体の文字列を取得するように範囲の変更
-    const startPos = new vscode.Position(selection.anchor.line, 0);
+    // 選択開始位置からではなく、行頭から文字列を取得する
+    const startPos = new vscode.Position(selection.start.line, 0);
     const selectedLinesRange = new vscode.Range(startPos, selection.end);
     const selectedText = document.getText(selectedLinesRange);
 
@@ -33,16 +33,13 @@ export function activate(context: vscode.ExtensionContext): void {
       return;
     }
 
-    // アンコメント処理
-    const range = new vscode.Range(commentStartPosArr[0], commentEndPosArr[0]);
-    
-    // NOTE: Position.translate(): Create a new position relative to this position.
-    const commentStartPosInEditor = selection.start.translate(commentStartPosArr[0].line);
-    const commentEndPosInEditor = commentStartPosInEditor.translate(commentEndPosArr[0].line);
-    const commentRangeInEditor = new vscode.Range(commentStartPosInEditor, commentEndPosInEditor);
-
+    const ranges = commentStartPosArr.map((unused, i) => 
+      new vscode.Range(commentStartPosArr[i], commentEndPosArr[i])
+    );
+    console.log(ranges);
+      
     await editor.edit(editBuilder => {
-      editBuilder.replace(commentRangeInEditor, uncomment.uncomment(range));
+      editBuilder.replace(selectedLinesRange, uncomment.uncomment(ranges));
     });
 
   });

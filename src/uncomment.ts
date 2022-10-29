@@ -27,13 +27,13 @@ export class Uncomment {
 
         // コメント先頭行の検出
         if(rows[i][j] === '/' && rows[i][j + 1] === '*') {
-          const position = new vscode.Position(i, j); // +1 にして先頭行を削除
+          const position = new vscode.Position(i, j);
           commentStartPosArr.push(position);
         }
 
         // コメント最終行の検出
         if(rows[i][j] === '*' && rows[i][j + 1] === '/') {
-          const position = new vscode.Position(i + 1, j - 1); // アンコメント対象はこの行を含まない
+          const position = new vscode.Position(i + 1, j - 1);
           commentEndPosArr.push(position);
         }
       }
@@ -44,19 +44,39 @@ export class Uncomment {
 
   /**
    * アンコメントする（コメント部の削除をする）
+   * @param commentRanges コメント行の範囲の配列
+   * @return アンコメント後の文字列
    */
-  public uncomment(range: vscode.Range): string {
+  public uncomment(commentRanges: vscode.Range[]): string {
 
-    const start = range.start.translate(+ 1); // インクリメントして先頭行を削除
-    const end = range.end.translate(- 1); // デクリメントで終端行を削除
-    const commentColumnNum = 3;
+    let commentNo = 0;
     const uncommentRows: string[] = [];
-    for(let i = start.line; i < end.line; i++) {
-      uncommentRows.push(
-        this.rows[i].slice(0, start.character)
-        + this.rows[i].slice(start.character + commentColumnNum));
+    for(const [rowLine, row] of this.rows.entries()) {
+      const commentRange = commentNo < commentRanges.length
+        ? commentRanges[commentNo]
+        : new vscode.Range(new vscode.Position(0, 0), new vscode.Position(0, 0));
+
+      if(rowLine === commentRange.end.line) {
+        commentNo++;
+      }
+
+      if(rowLine === commentRange.start.line || rowLine === commentRange.end.line) {
+        continue;
+      }
+
+      const isInRange = (commentRange.start.line <= rowLine) && (rowLine < commentRange.end.line);
+      console.log(commentNo, commentRange, isInRange, row);
+      
+      if(isInRange) {
+        const commentColumnNum = 3;
+        const strBeforeComment = row.slice(0, commentRange.start.character);
+        const strAfterComment = row.slice(commentRange.start.character + commentColumnNum);
+
+        uncommentRows.push(strBeforeComment + strAfterComment);
+      } else {
+        uncommentRows.push(row);
+      }
     }
-    uncommentRows.push('');
 
     return uncommentRows.join('\n'); // 一つの文字列に結合して返す
   }

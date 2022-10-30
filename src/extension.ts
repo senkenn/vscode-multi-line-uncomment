@@ -27,8 +27,8 @@ export function activate(context: vscode.ExtensionContext): void {
     const uncomment = new Uncomment(selectedText);
     const [commentStartPosArr, commentEndPosArr] = uncomment.detectMultiLineCommentPos();
 
-    // コメント行が何もなければ標準のコメント処理をして終了
-    if(!commentStartPosArr.length || !commentEndPosArr.length) {
+    // コメントの先頭行と終端行の数が揃わなければ標準のコメント処理をして終了
+    if(commentStartPosArr.length !== commentEndPosArr.length) {
       await vscode.commands.executeCommand('editor.action.commentLine');
       return;
     }

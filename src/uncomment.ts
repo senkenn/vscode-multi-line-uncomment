@@ -33,7 +33,7 @@ export class Uncomment {
 
         // コメント最終行の検出
         if(rows[i][j] === '*' && rows[i][j + 1] === '/') {
-          const position = new vscode.Position(i + 1, j - 1);
+          const position = new vscode.Position(i, j - 1);
           commentEndPosArr.push(position);
         }
       }
@@ -60,13 +60,13 @@ export class Uncomment {
         commentNo++;
       }
 
+      const isInRange = (commentRange.start.line <= rowLine) && (rowLine < commentRange.end.line);
+      console.log(commentNo, commentRange.start, commentRange.end, String(isInRange).padEnd(5, ' '), rowLine.toString().padStart(2, ' '), row);
+
       if(rowLine === commentRange.start.line || rowLine === commentRange.end.line) {
         continue;
       }
 
-      const isInRange = (commentRange.start.line <= rowLine) && (rowLine < commentRange.end.line);
-      console.log(commentNo, commentRange, isInRange, row);
-      
       if(isInRange) {
         const commentColumnNum = 3;
         const strBeforeComment = row.slice(0, commentRange.start.character);

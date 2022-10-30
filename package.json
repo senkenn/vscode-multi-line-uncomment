@@ -1,7 +1,7 @@
 {
   "name": "vscode-multi-line-uncomment",
   "displayName": "Multi Line Uncomment",
-  "description": "",
+  "description": "Uncomment multi-line block comments easily.",
   "version": "0.0.1",
   "engines": {
     "vscode": "^1.72.0"

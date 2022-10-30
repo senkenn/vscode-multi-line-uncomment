@@ -9,12 +9,7 @@ Uncomment multi-line block comments easily.
   * If there is no block comment, it behaves as the same keyboard shortcut command, `Toggle Line Comment`. 
 ## Release Notes
 
-Users appreciate release notes as you update your extension.
-
-### 1.0.0
-
-* Initial release
-* Uncomment starred block comment
+Detailed Release Notes are available [here](https://github.com/senkenn/vscode-multi-line-uncomment/releases).
 
 ## Visual Studio Marketplace
 

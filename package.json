@@ -13,6 +13,7 @@
     "onCommand:vscode.multi.line.uncomment.uncomment"
   ],
   "main": "./dist/extension.js",
+  "publisher": "SENKEN",
   "contributes": {
     "commands": [
       {
@@ -23,7 +24,7 @@
     "keybindings": [
       {
         "command": "vscode.multi.line.uncomment.uncomment",
-        "key": "ctrl+shift+/"
+        "key": "ctrl+/"
       }
     ]
   },

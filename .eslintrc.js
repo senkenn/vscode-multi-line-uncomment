@@ -18,6 +18,7 @@ module.exports = {
     'tsconfigRootDir': __dirname,
     'project': ['./tsconfig.json']
   },
+  "ignorePatterns": ["webpack.config.js"],
   'rules': {
     'prettier/prettier': 'off',
 

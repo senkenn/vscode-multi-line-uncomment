@@ -2,7 +2,7 @@
 
 Uncomment multi-line block comments easily. 
 
-https://user-images.githubusercontent.com/65453007/198985917-d1f5807c-39f1-4089-9d6a-0b8988bb7469.mp4
+![20221031_190542_Trim](https://user-images.githubusercontent.com/65453007/198986860-c9688b0c-7d65-4762-93f6-34f2a50ec3ea.gif)
 
 ## Features
 * Uncomment multi-line block comments
